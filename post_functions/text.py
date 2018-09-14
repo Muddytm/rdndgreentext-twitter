@@ -70,7 +70,6 @@ def raw_text(submission, data):
                 substr = line
 
             text += "> {}\n\n".format(substr)
-            print ("> " + substr)
             line_count += 2
 
         # Next do a line count check to make sure there's room.
@@ -91,7 +90,6 @@ def raw_text(submission, data):
             line_count = 0
             text = ""
 
-    print (line_count)
     # TODO: figure out a better solution than slapping this at the end...
     if line_count > 0:
         filename = "images/file{}.png".format(str(img_count))
@@ -114,7 +112,6 @@ def raw_text(submission, data):
 
     # Build and post tweet
     tweet = clean("{} - [posted by /u/{}]".format(title, submission.author.name))
-    print (tweet)
     api.update_status(status=tweet, media_ids=media)
 
     # Clean up and add post id to posted.json
