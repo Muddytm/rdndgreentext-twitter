@@ -54,27 +54,32 @@ def run():
 
     for submission in sub.top(limit=100):
         if int(submission.ups) > threshold and not submission.stickied:
-            # Single image posts - works with reddit and imgur links
-            if ((submission.url.endswith(".jpg") or
-                    submission.url.endswith(".png")) and
-                    submission.id not in data["ids"]):
-                # Run single_image() and wait until next cron job.
-                # If single_image() runs into an error, continue to next.
-                if pf.single_image(submission, data):
-                    return
-                else:
-                    continue
-            # If the post is an imgur album
-            elif "/a/" in submission.url and submission.id not in data["ids"]:
-                if pf.multiple_images(submission, data):
-                    return
-                else:
-                    continue
-            elif submission.id not in data["ids"]:
-                if pf.raw_text(submission, data):
-                    return
-                else:
-                    continue
+            try:
+                # Single image posts - works with reddit and imgur links
+                if ((submission.url.endswith(".jpg") or
+                        submission.url.endswith(".png")) and
+                        submission.id not in data["ids"]):
+                    # Run single_image() and wait until next cron job.
+                    # If single_image() runs into an error, continue to next.
+                    if pf.single_image(submission, data):
+                        return
+                    else:
+                        continue
+                # If the post is an imgur album
+                elif "/a/" in submission.url and submission.id not in data["ids"]:
+                    if pf.multiple_images(submission, data):
+                        return
+                    else:
+                        continue
+                # If the post is a text post
+                elif submission.id not in data["ids"]:
+                    if pf.raw_text(submission, data):
+                        return
+                    else:
+                        continue
+            except as e:
+                with open("errors.log", "a") as f:
+                    f.write("Error with post id: {}...{}".format(submission.id, e))
 
 
 if __name__ == "__main__":
