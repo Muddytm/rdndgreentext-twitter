@@ -12,3 +12,7 @@ client_secret = ""
 user = ""
 password = ""
 subreddit = ""
+
+# Imgur stuff
+imgur_id = ""
+imgur_secret = ""
