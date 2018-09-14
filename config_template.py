@@ -7,6 +7,8 @@ access_token = ""
 access_token_secret = ""
 
 # Reddit stuff
+client_id = ""
+client_secret = ""
 user = ""
 password = ""
 subreddit = ""
