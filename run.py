@@ -32,43 +32,8 @@ def run():
         with open("posted.json") as f:
             data = json.load(f)
 
-
-    # img = Image.new("RGB", (500, 800), color=(20, 29, 38))
-    #
-    # fnt = ImageFont.truetype(config.font, 17)
-    # d = ImageDraw.Draw(img)
-    # # d.text((20, 20), "Hello World", font=fnt, fill=(164, 255, 211))
-    # # img.save("images/test.png")
-    # #exit()
-    #
-    #
-    # for submission in sub.top(limit=100):
-    #     if "Insomnia Adventures" in submission.title:
-    #         pprint.pprint(vars(submission))
-    #         #print (submission.selftext)
-    #         lines = []
-    #         text = ""
-    #         for line in submission.selftext.splitlines():
-    #             if line:
-    #                 if not line.startswith(">"):
-    #                     line = ("> " + line)
-    #                 lines.append(line)
-    #
-    #         for line in lines:
-    #             if len(line) > 200:
-    #                 return
-    #             elif len(line) > 50:
-    #                 line[:]
-    #
-    #             text += "{}\n\n".format(line)
-    #         break
-    #
-    # d.text((20, 20), text, font=fnt, fill=(164, 255, 211))
-    # img.save("images/test.png")
-    # exit()
-
-
     for submission in sub.hot(limit=100):
+        break
         if int(submission.ups) > threshold and not submission.stickied:
             # Single image posts - works with reddit and imgur links
             if ((submission.url.endswith(".jpg") or
@@ -100,8 +65,13 @@ def run():
                 else:
                     continue
             # If the post is an imgur album
-            elif "/a/" in submission.url:
+            elif "/a/" in submission.url and submission.id not in data["ids"]:
                 if pf.multiple_images(submission, data):
+                    return
+                else:
+                    continue
+            elif submission.id not in data["ids"]:
+                if pf.raw_text(submission, data):
                     return
                 else:
                     continue
