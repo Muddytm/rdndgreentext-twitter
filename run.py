@@ -77,7 +77,7 @@ def run():
                         return
                     else:
                         continue
-            except as e:
+            except Exception as e:
                 with open("errors.log", "a") as f:
                     f.write("Error with post id: {}...{}".format(submission.id, e))
 
