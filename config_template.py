@@ -16,3 +16,6 @@ subreddit = ""
 # Imgur stuff
 imgur_id = ""
 imgur_secret = ""
+
+# Font you wanna use for generated greentext images
+font = ""
