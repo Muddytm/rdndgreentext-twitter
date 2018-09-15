@@ -12,6 +12,7 @@ client_secret = ""
 user = ""
 password = ""
 subreddit = ""
+threshold = 500
 
 # Imgur stuff
 imgur_id = ""

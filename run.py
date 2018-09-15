@@ -16,7 +16,7 @@ reddit = praw.Reddit(client_id=config.client_id,
 
 # Threshold for how many points a post needs before it is considered worthy
 # to upload to the Twitter account
-threshold = 100
+threshold = config.threshold
 
 # Get subreddit in question (dndgreentext)
 sub = reddit.subreddit(config.subreddit)
