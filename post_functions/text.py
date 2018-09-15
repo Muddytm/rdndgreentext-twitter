@@ -111,7 +111,7 @@ def raw_text(submission, data):
         title = submission.title
 
     # Build and post tweet
-    tweet = clean("{} (https://redd.it/{})".format(title, submission.author.id))
+    tweet = clean("{} (by /u/{})".format(title, submission.author.name))
     api.update_status(status=tweet, media_ids=media)
 
     # Clean up and add post id to posted.json
