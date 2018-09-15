@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 import post_functions as pf
 import pprint
 import praw
+import sys
 
 # Configure Reddit authentication
 reddit = praw.Reddit(client_id=config.client_id,
@@ -32,54 +33,78 @@ def run():
         with open("posted.json") as f:
             data = json.load(f)
 
-    for submission in sub.hot(limit=100):
-        break
-        if int(submission.ups) > threshold and not submission.stickied:
-            # Single image posts - works with reddit and imgur links
-            if ((submission.url.endswith(".jpg") or
-                    submission.url.endswith(".png")) and
-                    submission.id not in data["ids"]):
-                # Run single_image() and wait until next cron job.
-                # If single_image() runs into an error, continue to next.
-                if pf.single_image(submission, data):
-                    return
-                else:
-                    continue
-            # If the post is an imgur album
-            elif "/a/" in submission.url:
-                if pf.multiple_images(submission, data):
-                    return
-                else:
-                    continue
+    mode = sys.argv[1]
 
-    for submission in sub.top(limit=100):
-        if int(submission.ups) > threshold and not submission.stickied:
-            try:
-                # Single image posts - works with reddit and imgur links
-                if ((submission.url.endswith(".jpg") or
-                        submission.url.endswith(".png")) and
-                        submission.id not in data["ids"]):
-                    # Run single_image() and wait until next cron job.
-                    # If single_image() runs into an error, continue to next.
-                    if pf.single_image(submission, data):
-                        return
-                    else:
+    # Search hot posts
+    if mode == "hot":
+        for submission in sub.hot(limit=100):
+            if int(submission.ups) > threshold and not submission.stickied:
+                try:
+                    # Single image posts - works with reddit and imgur links
+                    if ((submission.url.endswith(".jpg") or
+                            submission.url.endswith(".png")) and
+                            submission.id not in data["ids"]):
+                        # Run single_image() and wait until next cron job.
+                        # If single_image() runs into an error, continue to next.
+                        if pf.single_image(submission, data):
+                            return
+                        else:
+                            continue
+                    # If the post is an imgur album
+                    elif "/a/" in submission.url and submission.id not in data["ids"]:
+                        if pf.multiple_images(submission, data):
+                            return
+                        else:
+                            continue
+                    # Single image, with extensionless imgur link
+                    elif ("imgur" in submission.url and
+                            "/a/" not in submission.url and
+                            submission.id not in data["ids"]):
                         continue
-                # If the post is an imgur album
-                elif "/a/" in submission.url and submission.id not in data["ids"]:
-                    if pf.multiple_images(submission, data):
-                        return
-                    else:
+                    # If the post is a text post
+                    elif submission.id not in data["ids"]:
+                        if pf.raw_text(submission, data):
+                            return
+                        else:
+                            continue
+                except Exception as e:
+                    with open("errors.log", "a") as f:
+                        f.write("Error with post id: {}...{}".format(submission.id, e))
+    # Search top posts
+    elif mode == "top":
+        for submission in sub.top(limit=100):
+            if int(submission.ups) > threshold and not submission.stickied:
+                try:
+                    # Single image posts - works with reddit and imgur links
+                    if ((submission.url.endswith(".jpg") or
+                            submission.url.endswith(".png")) and
+                            submission.id not in data["ids"]):
+                        # Run single_image() and wait until next cron job.
+                        # If single_image() runs into an error, continue to next.
+                        if pf.single_image(submission, data):
+                            return
+                        else:
+                            continue
+                    # If the post is an imgur album
+                    elif "/a/" in submission.url and submission.id not in data["ids"]:
+                        if pf.multiple_images(submission, data):
+                            return
+                        else:
+                            continue
+                    # Single image, with extensionless imgur link
+                    elif ("imgur" in submission.url and
+                            "/a/" not in submission.url and
+                            submission.id not in data["ids"]):
                         continue
-                # If the post is a text post
-                elif submission.id not in data["ids"]:
-                    if pf.raw_text(submission, data):
-                        return
-                    else:
-                        continue
-            except Exception as e:
-                with open("errors.log", "a") as f:
-                    f.write("Error with post id: {}...{}".format(submission.id, e))
+                    # If the post is a text post
+                    elif submission.id not in data["ids"]:
+                        if pf.raw_text(submission, data):
+                            return
+                        else:
+                            continue
+                except Exception as e:
+                    with open("errors.log", "a") as f:
+                        f.write("Error with post id: {}...{}".format(submission.id, e))
 
 
 if __name__ == "__main__":

@@ -38,7 +38,7 @@ def single_image(submission, data):
         title = submission.title
 
     # Build and post tweet
-    tweet = "{} - [posted by /u/{}]".format(title, submission.author.name)
+    tweet = "{} (https://redd.it/{})".format(title, submission.author.id)
     api.update_with_media(filename, tweet)
 
     # Clean up and add post id to posted.json

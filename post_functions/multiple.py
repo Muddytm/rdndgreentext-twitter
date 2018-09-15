@@ -57,8 +57,7 @@ def multiple_images(submission, data):
         title = submission.title
 
     # Build and post tweet
-    tweet = "{} - [posted by /u/{}]".format(title, submission.author.name)
-
+    tweet = "{} (https://redd.it/{})".format(title, submission.author.id)
     api.update_status(status=tweet, media_ids=media)
 
     # Clean up and add post id to posted.json
