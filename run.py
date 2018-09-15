@@ -38,7 +38,9 @@ def run():
     # Search hot posts
     if mode == "hot":
         for submission in sub.hot(limit=100):
-            if int(submission.ups) > threshold and not submission.stickied:
+            if int((submission.ups) > threshold and
+                    not submission.stickied and
+                    not submission.over_18):
                 try:
                     # Single image posts - works with reddit and imgur links
                     if ((submission.url.endswith(".jpg") or
@@ -73,7 +75,9 @@ def run():
     # Search top posts
     elif mode == "top":
         for submission in sub.top(limit=100):
-            if int(submission.ups) > threshold and not submission.stickied:
+            if int((submission.ups) > threshold and
+                    not submission.stickied and
+                    not submission.over_18):
                 try:
                     # Single image posts - works with reddit and imgur links
                     if ((submission.url.endswith(".jpg") or
